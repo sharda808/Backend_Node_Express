@@ -1,8 +1,5 @@
-const http = require('http');
-const fs = require('fs');
-
-console.log('I was here');
- const requestHandle=(req,res) => {
+ const fs = require('fs');
+const {URLSearchParams} = require('url');const RequestHandler=(req,res) => {
 console.log('Request Received', req.url, req.method);
 res.setHeader('Content-Type', 'text/html');
 if(req.url === "/"){
@@ -22,7 +19,7 @@ res.write(`<!DOCTYPE html>
   </form>
 </body>
 </html>`);
-
+res.end();
 }
 else if(req.url === "/buy-product"){
   console.log("Form data received");
@@ -33,12 +30,20 @@ else if(req.url === "/buy-product"){
   });
   req.on('end',()=> {
     const body = Buffer.concat(buffer).toString();
- console.log(body);
-  })
-   fs.writeFileSync('buy.txt', 'Myntra app')
+    const urlParams =  new URLSearchParams(body);
+    const bodyJson = {};
+    for(const[key,value] of urlParams.entries()){
+bodyJson[key] = value;
+    }
+    console.log(JSON.stringify(bodyJson));
+  fs.writeFile('buy.txt', JSON.stringify(bodyJson),(err) => {
   res.statusCode = 302;
   res.setHeader ('Location', '/product');
+  res.end();
   console.log('Sending Resposne');
+  })
+  });
+
 }
 else if(req.url === "/product"){
 res.write(`<!DOCTYPE html>
@@ -66,10 +71,7 @@ else{
 </body>
 </html>`)
 }
-res.end();
+
  }
-const server = http.createServer(requestHandle);
-const PORT = 3000;
-server.listen(PORT, () => {
-  console.log(`Server running at: http://localhost:${PORT}`)
-})
+
+ exports.handler = RequestHandler;
