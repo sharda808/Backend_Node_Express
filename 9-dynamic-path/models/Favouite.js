@@ -20,6 +20,13 @@ Favourite.fetchAll(favouriteIds => {
   fs.writeFile(favouriteFilePath,JSON.stringify(favouriteIds),callback);
 })
    }
+     static deleteById(removehomeId, callback){
+           Favourite.fetchAll(homeIds => {
+         const newHomeIds = homeIds.filter(homeId =>
+           removehomeId !==homeId)
+           fs.writeFile(favouriteFilePath, JSON.stringify(newHomeIds),callback)
+                })
+         } 
 }
 
 
